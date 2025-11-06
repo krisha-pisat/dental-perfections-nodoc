@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Patient, DentalHistory, Prescription
-
-# This serializer is from your 'users' app.
-# We import it to nest it inside the PatientSerializer.
+from .models import Patient, DentalHistory, Prescription, Appointment
 from users.serializers import UserSerializer
 
 class PrescriptionSerializer(serializers.ModelSerializer):
@@ -48,8 +45,7 @@ class PatientSerializer(serializers.ModelSerializer):
             'history'
         ]
 
-# --- Serializers for *Creating* Data ---
-# These are simple, non-nested serializers for the Doctor to create new records.
+# --- Serializers for *Creating* Data (Doctor/Staff) ---
 
 class DentalHistoryCreateSerializer(serializers.ModelSerializer):
     """
@@ -68,3 +64,39 @@ class PrescriptionCreateSerializer(serializers.ModelSerializer):
         model = Prescription
         # 'history_entry' will be a dropdown/ID in the API
         fields = ['history_entry', 'medicine_name', 'dosage', 'instructions']
+
+# --- NEW APPOINTMENT SERIALIZERS ---
+
+class AppointmentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ['id', 'service_requested', 'appointment_date', 'appointment_time', 'notes']
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for viewing appointment details (used by the Doctor/Staff).
+    """
+    # CRITICAL FIX: Comment out nested fields to avoid crashes with AllowAny permissions
+    # patient_username = serializers.CharField(source='patient.user.username', read_only=True)
+    # patient_name = serializers.CharField(source='patient.user.get_full_name', read_only=True)
+
+    class Meta:
+        model = Appointment
+        fields = [
+            'id', 
+            'patient', # Patient ID
+            # 'patient_username', 
+            # 'patient_name',
+            'service_requested', 
+            'appointment_date', 
+            'appointment_time', 
+            'notes', 
+            'status', 
+            'created_at'
+        ]
+        read_only_fields = [
+            'patient', 
+            # 'patient_username', 
+            # 'patient_name', 
+            'created_at'
+        ]

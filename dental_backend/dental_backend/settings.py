@@ -1,3 +1,5 @@
+# dental_backend/settings.py
+
 """
 Django settings for dental_backend project.
 
@@ -133,13 +135,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # === CORS SETTINGS (UPDATED) ===
-# This replaces your old CORS_ALLOWED_ORIGINS and CORS_ALLOW_CREDENTIALS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", # Allow your React app
-    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5173", # Allow 127.0.0.1 version
 ]
 CORS_ALLOW_CREDENTIALS = True # This allows cookies (for admin) and auth tokens
 
+
+# === CSRF/SESSION SECURITY FIXES (NEW) ===
+# These settings fix the cross-port/cross-domain issues for the admin cookie:
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:5173",
+]
+# For local dev, temporarily relax SameSite and Secure settings
+CSRF_COOKIE_SAMESITE = None
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = False
 
 # === REST FRAMEWORK SETTINGS (NEW) ===
 REST_FRAMEWORK = {

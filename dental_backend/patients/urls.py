@@ -7,14 +7,18 @@ router = DefaultRouter()
 router.register(r'patients', views.PatientViewSet, basename='patient')
 router.register(r'history', views.DentalHistoryViewSet, basename='history')
 router.register(r'prescriptions', views.PrescriptionViewSet, basename='prescription')
+# --- ADD NEW ROUTE FOR APPOINTMENTS ---
+router.register(r'appointments', views.AppointmentViewSet, basename='appointment') 
+
 
 # Define the URLs
 urlpatterns = [
-    # --- Doctor URLs ---
+    # --- Doctor/API URLs ---
     # This automatically creates:
-    # /api/patients/patients/ (for the list of patients)
-    # /api/patients/history/ (for creating/viewing history)
-    # /api/patients/prescriptions/ (for creating/viewing prescriptions)
+    # /api/patients/patients/ (list of patients)
+    # /api/patients/history/ (history management)
+    # /api/patients/prescriptions/ (prescription management)
+    # /api/patients/appointments/ (appointment submission/management)
     path('', include(router.urls)),
     
     # --- Patient URL ---

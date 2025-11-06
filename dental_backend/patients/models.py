@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -38,3 +37,32 @@ class Prescription(models.Model):
 
     def __str__(self):
         return f"{self.medicine_name} ({self.dosage})"
+
+# --- NEW MODEL FOR APPOINTMENTS ---
+class Appointment(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('CONFIRMED', 'Confirmed'),
+        ('CANCELLED', 'Cancelled'),
+        ('COMPLETED', 'Completed'),
+    ]
+
+    # Link to the Patient who created it
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, related_name='appointments') 
+    
+    # Details of the booking
+    service_requested = models.CharField(max_length=100) # e.g., 'Check-up', 'Cleaning', 'Emergency'
+    appointment_date = models.DateField()
+    appointment_time = models.TimeField()
+    notes = models.TextField(blank=True, help_text="Reason for the visit or special request.")
+
+    # Status and timestamps
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['appointment_date', 'appointment_time']
+        verbose_name_plural = "Appointments"
+        
+    def __str__(self):
+        return f"Appointment for {self.patient.user.username} on {self.appointment_date} at {self.appointment_time}"

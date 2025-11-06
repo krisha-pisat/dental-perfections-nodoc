@@ -153,6 +153,45 @@ export async function createPrescription(presData) {
   return await res.json();
 }
 
+// --- NEW FUNCTION: Fetch all appointments for staff ---
+export async function getAppointments() {
+    const res = await fetch(`${API_BASE}/api/patients/appointments/`, {
+        credentials: 'include', // Uses admin cookie
+    });
+    if (res.status === 401 || res.status === 403) {
+        throw new Error('Not authorized. Please log in via the /admin panel.');
+    }
+    if (!res.ok) {
+        throw new Error('Failed to fetch appointments');
+    }
+    return await res.json();
+}
+
+// --- NEW FUNCTION: Update appointment status for staff ---
+/**
+ * Updates an appointment's status (used by the staff dashboard).
+ * @param {number} id - Appointment ID
+ * @param {string} status - New status (e.g., 'CONFIRMED', 'CANCELLED')
+ */
+export async function updateAppointmentStatus(id, status) {
+    const res = await fetch(`${API_BASE}/api/patients/appointments/${id}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Uses admin cookie
+        body: JSON.stringify({ status }),
+    });
+    if (res.status === 401 || res.status === 403) {
+        throw new Error('Not authorized. Please log in via the /admin panel.');
+    }
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMessages = Object.values(errorData).flat().join(' ');
+        throw new Error(errorMessages || 'Failed to update appointment status.');
+    }
+    return await res.json();
+}
+
+
 // -------------------- PATIENT SECURE FUNCTIONS (JWT) --------------------
 
 /**
@@ -180,7 +219,6 @@ export async function getMyProfile() {
   return await res.json();
 }
 
-// --- THIS IS THE NEW FUNCTION ---
 /**
  * Submits a new review.
  * Uses JWT Token.
@@ -204,6 +242,39 @@ export async function addReview(reviewData) {
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.detail || 'Failed to submit your review.');
+  }
+  return await res.json();
+}
+
+// --- NEW FUNCTION: APPOINTMENT BOOKING ---
+/**
+ * Submits a new appointment request.
+ * Uses JWT Token.
+ * @param {object} appointmentData - { service_requested (string), appointment_date (string 'YYYY-MM-DD'), appointment_time (string 'HH:MM:SS'), notes (string) }
+ */
+export async function createAppointment(appointmentData) {
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    throw new Error('No access token found. Please log in.');
+  }
+
+  const res = await fetch(`${API_BASE}/api/patients/appointments/`, { // <-- New API Endpoint
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`, // <-- Send the auth token
+    },
+    body: JSON.stringify(appointmentData),
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('Authorization failed. Please log in again.');
+  }
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    // Flatten and join error messages for display
+    const errorMessages = Object.values(errorData).flat().join(' ');
+    throw new Error(errorMessages || 'Failed to book appointment.');
   }
   return await res.json();
 }

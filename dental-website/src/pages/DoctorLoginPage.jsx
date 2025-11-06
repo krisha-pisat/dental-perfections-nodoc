@@ -1,6 +1,9 @@
+// src/pages/DoctorLoginPage.jsx
+
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Link } from 'react-router-dom'; // <-- ADD THIS IMPORT
 
 // --- Inline SVG ---
 const DoctorIcon = (props) => (
@@ -55,9 +58,10 @@ const DoctorLoginPage = () => {
           
           <p className="text-xs text-gray-500 mt-6">
             After logging in via the admin panel, you can return to this site and access the{' '}
-            <a href="/dashboard" className="text-blue-700 hover:underline">
+            {/* FIX: Changed <a> to <Link> for reliable internal routing */}
+            <Link to="/dashboard" className="text-blue-700 hover:underline">
               Doctor Dashboard
-            </a>.
+            </Link>.
           </p>
         </div>
       </div>

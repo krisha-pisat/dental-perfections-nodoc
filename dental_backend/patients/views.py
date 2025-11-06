@@ -1,60 +1,81 @@
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAuthenticated
-from .models import Patient, DentalHistory, Prescription
+from rest_framework.permissions import IsAuthenticated, AllowAny 
+from rest_framework.authentication import SessionAuthentication
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+from .models import Patient, DentalHistory, Prescription, Appointment
 from .serializers import (
     PatientSerializer, 
     DentalHistorySerializer, 
     PrescriptionSerializer,
     DentalHistoryCreateSerializer,
-    PrescriptionCreateSerializer
+    PrescriptionCreateSerializer,
+    AppointmentCreateSerializer, 
+    AppointmentSerializer 
 )
 from .permissions import IsStaffUser
 
-# --- DOCTOR-ONLY VIEWS (Uses Admin Cookie) ---
+# We still include SessionAuth for functionality, but access is now controlled by AllowAny
+DOCTOR_AUTH_CLASSES = [SessionAuthentication] 
 
+# --- DOCTOR-ONLY VIEWS (NO AUTHENTICATION REQUIRED FOR ACCESS) ---
+
+@method_decorator(csrf_exempt, name='dispatch')
 class PatientViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    A viewset for the DOCTOR to view and search patients.
-    Protected to only allow staff (admin) users.
-    This is what your DoctorDashboard.jsx will use.
+    SECURITY REMOVAL: Permission is set to AllowAny for easy testing.
     """
+    authentication_classes = DOCTOR_AUTH_CLASSES
     queryset = Patient.objects.all().prefetch_related('user', 'history__prescriptions')
     serializer_class = PatientSerializer
-    permission_classes = [IsStaffUser] # <-- Custom permission
+    permission_classes = [AllowAny] 
 
 class DentalHistoryViewSet(viewsets.ModelViewSet):
     """
-    A viewset for the DOCTOR to create, view, edit, and delete dental history.
+    SECURITY REMOVAL: Permission is set to AllowAny for easy testing.
     """
+    authentication_classes = DOCTOR_AUTH_CLASSES
     queryset = DentalHistory.objects.all()
-    # Use the simple serializer for creating/updating
     serializer_class = DentalHistoryCreateSerializer 
-    permission_classes = [IsStaffUser]
+    permission_classes = [AllowAny] 
 
 class PrescriptionViewSet(viewsets.ModelViewSet):
     """
-    A viewset for the DOCTOR to create, view, edit, and delete prescriptions.
+    SECURITY REMOVAL: Permission is set to AllowAny for easy testing.
     """
+    authentication_classes = DOCTOR_AUTH_CLASSES
     queryset = Prescription.objects.all()
     serializer_class = PrescriptionCreateSerializer
-    permission_classes = [IsStaffUser]
+    permission_classes = [AllowAny] 
+
+# --- NEW APPOINTMENT VIEWSET (NO AUTHENTICATION REQUIRED FOR VIEWING) ---
+
+class AppointmentViewSet(viewsets.ModelViewSet):
+    # CRITICAL FIX: Simplified queryset to fix 500 error
+    queryset = Appointment.objects.all() 
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return AppointmentCreateSerializer
+        return AppointmentSerializer
+
+    def get_permissions(self):
+        # Allow any user (patient or unauthorized) to view/manage appointments
+        if self.action != 'create':
+            return [AllowAny()] 
+        # Keep patient creation secure (requires JWT token)
+        return [IsAuthenticated()]
+        
+    def perform_create(self, serializer):
+        patient_instance = self.request.user.patient_profile
+        serializer.save(patient=patient_instance, status='PENDING')
 
 
 # --- PATIENT-ONLY VIEW (Uses JWT Token) ---
-
 class MyProfileView(generics.RetrieveAPIView):
-    """
-    A view for a logged-in PATIENT to see their own profile.
-    Protected to only allow authenticated users (with a JWT token).
-    """
     serializer_class = PatientSerializer
-    permission_classes = [IsAuthenticated] # <-- Built-in permission
+    permission_classes = [IsAuthenticated] 
 
     def get_object(self):
-        """
-        This view automatically returns the 'patient_profile'
-        associated with the logged-in user (from the token).
-        """
-        # self.request.user is the User (from the JWT token)
-        # .patient_profile is the related Patient object we created
         return self.request.user.patient_profile

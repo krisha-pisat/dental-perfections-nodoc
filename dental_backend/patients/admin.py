@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Patient, DentalHistory, Prescription
+from .models import Patient, DentalHistory, Prescription, Appointment # <-- IMPORT Appointment
 
 class PrescriptionInline(admin.TabularInline):
     """
@@ -17,6 +17,20 @@ class DentalHistoryInline(admin.TabularInline):
     model = DentalHistory
     # inlines = [PrescriptionInline]  <-- DELETE THIS LINE
     extra = 1
+
+# --- NEW ADMIN CLASS FOR APPOINTMENTS ---
+@admin.register(Appointment)
+class AppointmentAdmin(admin.ModelAdmin):
+    list_display = ('patient_link', 'service_requested', 'appointment_date', 'appointment_time', 'status', 'created_at')
+    list_filter = ('status', 'appointment_date', 'service_requested')
+    search_fields = ('patient__user__username', 'patient__user__first_name', 'patient__user__last_name', 'service_requested')
+    readonly_fields = ('patient', 'created_at') 
+
+    def patient_link(self, obj):
+        # Displays the patient's username, helping the staff identify the booking
+        return obj.patient.user.username
+    patient_link.short_description = 'Patient Username'
+
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):

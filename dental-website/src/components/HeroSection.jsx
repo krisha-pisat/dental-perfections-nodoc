@@ -1,9 +1,20 @@
+// src/components/HeroSection.jsx
 import React from 'react';
-import { motion } from "framer-motion";
-// Removed heroVideo import
+import { motion } from "framer-motion"; // <-- Import motion
+import { Link } from 'react-router-dom'; // <-- Import Link
 import { FaStar, FaArrowRight } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext'; 
+
+// Create a motion-enabled Link component for proper prop handling
+const MotionLink = motion(Link); 
 
 const HeroSection = () => {
+  // Use the hook to get the logged-in user state
+  const { user } = useAuth(); 
+
+  // Define the target link based on login status
+  const appointmentLink = user ? '/book-appointment' : '/login'; 
+
   return (
     // Section uses the theme blue, adds padding for navbar, and rounded corners at the bottom
     <section className="bg-[#1e3a8a] text-white pt-28 pb-16 md:pt-32 md:pb-24 px-6 lg:px-8 overflow-hidden rounded-b-3xl md:rounded-b-[3rem]">
@@ -51,23 +62,26 @@ const HeroSection = () => {
             transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
           >
             {/* Styled "Book Appointment" button (White Background) */}
-            <motion.button
+            <MotionLink // <-- Use MotionLink
+              to={appointmentLink} 
+              // Now motion props are recognized
               whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(255, 255, 255, 0.1)"}}
               whileTap={{ scale: 0.98 }}
               className="group flex items-center justify-center gap-2 bg-white text-[#1e3a8a] font-semibold px-6 py-3 rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 w-full sm:w-auto"
             >
               Book Appointment
               <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-            </motion.button>
+            </MotionLink>
 
              {/* Styled "Explore Services" button (Outline) */}
-            <motion.button
+            <MotionLink // <-- Use MotionLink
+              to="/services" 
               whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderColor: 'white' }}
               whileTap={{ scale: 0.98 }}
               className="bg-transparent border border-white/50 text-white font-medium px-6 py-3 rounded-full hover:border-white transition-all duration-300 w-full sm:w-auto"
             >
               Explore Our Services
-            </motion.button>
+            </MotionLink>
           </motion.div>
         </motion.div>
 

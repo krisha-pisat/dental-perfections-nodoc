@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
@@ -31,7 +32,7 @@ const Navbar = () => {
   return (
     <div
       className={`
-        fixed top-0 left-0 w-full z-50 flex justify-center transition-all duration-500
+        fixed top-0 left-0 w-full z-50 flex justify-center transition-all duration-500 relative
         ${scrolled ? 'pt-4' : 'pt-0'}
       `}
     >
@@ -85,7 +86,7 @@ const Navbar = () => {
             <Link to="/blog" className="hover:text-blue-900 transition-colors">Blog</Link>
             <Link to="/faq" className="hover:text-blue-900 transition-colors">FAQ</Link>
             
-            {/* === DOCTOR LOGIN LINK REMOVED === */}
+            {/* REMOVED: Admin Dashboard link for security */}
             
           </div>
         </div>
@@ -192,7 +193,8 @@ const Navbar = () => {
                   </>
                 )}
                 
-                {/* === DOCTOR LOGIN LINK REMOVED FROM MOBILE === */}
+                {/* REMOVED: Admin Dashboard link for security */}
+                
               </div>
             </motion.div>
           )}

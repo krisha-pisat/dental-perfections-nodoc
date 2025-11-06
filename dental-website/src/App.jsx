@@ -12,7 +12,8 @@ import PatientLoginPage from './pages/PatientLoginPage';
 import PatientSignUpPage from './pages/PatientSignUpPage';
 import DoctorLoginPage from './pages/DoctorLoginPage';
 import DoctorDashboard from './pages/DoctorDashboard';
-import PatientProfilePage from './pages/PatientProfilePage'; // <-- IMPORT NEW PAGE
+import PatientProfilePage from './pages/PatientProfilePage'; 
+import AppointmentBookingPage from './pages/AppointmentBookingPage'; // <-- ADD THIS IMPORT
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -33,8 +34,9 @@ const App = () => {
       <Route path="/patient-login" element={<PatientLoginPage />} />
       <Route path="/patient-signup" element={<PatientSignUpPage />} />
 
-      {/* --- Patient Secure Route --- */}
-      <Route path="/my-profile" element={<PatientProfilePage />} /> {/* <-- ADD NEW ROUTE */}
+      {/* --- Patient Secure Routes --- */}
+      <Route path="/my-profile" element={<PatientProfilePage />} />
+      <Route path="/book-appointment" element={<AppointmentBookingPage />} /> {/* <-- ADD NEW ROUTE */}
 
       {/* --- Doctor/Admin Routes --- */}
       <Route path="/doctor-admin" element={<DoctorLoginPage />} />
