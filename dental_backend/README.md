@@ -62,3 +62,4 @@ The Django REST API includes the following apps:
 - django-cors-headers (for CORS support)
 - SQLite (development database)
 
+

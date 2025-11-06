@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta # <-- IMPORT THIS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,23 +38,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # 3rd Party Apps
     'rest_framework',
+    'rest_framework_simplejwt', # <-- ADD THIS
     'corsheaders',
+    
+    # Your Apps
     'reviews',
     'blog',
     'faq',
+    'patients',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # <-- Make sure this is high up
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
 ]
 
 ROOT_URLCONF = 'dental_backend.urls'
@@ -110,11 +116,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
+USE_I1N = True # <-- This was USE_I18N in your file, fixed typo
 USE_TZ = True
 
 
@@ -127,4 +130,33 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ALLOW_ALL_ORIGINS = True
+
+
+# === CORS SETTINGS (UPDATED) ===
+# This replaces your old CORS_ALLOWED_ORIGINS and CORS_ALLOW_CREDENTIALS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173", # Allow your React app
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_CREDENTIALS = True # This allows cookies (for admin) and auth tokens
+
+
+# === REST FRAMEWORK SETTINGS (NEW) ===
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # This sets JWT as the main auth method
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        # This makes all endpoints private by default
+        'rest_framework.permissions.IsAuthenticated', 
+    )
+}
+
+# === SIMPLE JWT SETTINGS (NEW) ===
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
