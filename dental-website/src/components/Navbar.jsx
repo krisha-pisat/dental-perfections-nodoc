@@ -1,16 +1,20 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
 import { FiMenu, FiX } from 'react-icons/fi';
-import { useAuth } from '../context/AuthContext'; // Import the auth hook
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  const { user, logout } = useAuth(); // Get PATIENT user and logout
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // Get current location
+
+  // Check if we are on the dashboard page
+  const isDashboard = location.pathname === '/dashboard';
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -21,7 +25,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
-    navigate('/'); // Navigate to home page after patient logout
+    navigate('/');
   };
 
   const menuVariants = {
@@ -85,46 +89,45 @@ const Navbar = () => {
             <Link to="/gallery" className="hover:text-blue-900 transition-colors">Smile Gallery</Link>
             <Link to="/blog" className="hover:text-blue-900 transition-colors">Blog</Link>
             <Link to="/faq" className="hover:text-blue-900 transition-colors">FAQ</Link>
-            
-            {/* REMOVED: Admin Dashboard link for security */}
-            
           </div>
         </div>
 
         {/* --- Buttons (Desktop Only) --- */}
         <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-          {/* === CONDITIONAL PATIENT BUTTONS === */}
-          {user ? (
-            // --- SHOW IF PATIENT IS LOGGED IN ---
+          {/* Only show patient buttons if NOT on the dashboard */}
+          {!isDashboard && (
             <>
-              <Link
-                to="/my-profile"
-                className="text-gray-600 text-sm font-medium hover:text-blue-900 px-3"
-              >
-                Welcome, {user.first_name || user.username}!
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg hover:bg-gray-200 transition-colors whitespace-nowrap"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            // --- SHOW IF PATIENT IS LOGGED OUT ---
-            <>
-              <Link
-                to="/signup" // Points to PatientSignupPage
-                className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg hover:bg-gray-200 transition-colors whitespace-nowrap"
-              >
-                Sign Up
-              </Link>
-              <Link
-                to="/login" // Points to PatientLoginPage
-                className="bg-blue-900 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-blue-800 transition-colors whitespace-nowrap"
-              >
-                Patient Login
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    to="/my-profile"
+                    className="text-gray-600 text-sm font-medium hover:text-blue-900 px-3"
+                  >
+                    Welcome, {user.first_name || user.username}!
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg hover:bg-gray-200 transition-colors whitespace-nowrap"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/signup"
+                    className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg hover:bg-gray-200 transition-colors whitespace-nowrap"
+                  >
+                    Sign Up
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="bg-blue-900 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-blue-800 transition-colors whitespace-nowrap"
+                  >
+                    Patient Login
+                  </Link>
+                </>
+              )}
             </>
           )}
         </div>
@@ -161,39 +164,39 @@ const Navbar = () => {
                 
                 <hr className="w-1/2 my-2"/>
 
-                {/* === CONDITIONAL MOBILE LINKS === */}
-                {user ? (
-                  // --- SHOW IF PATIENT IS LOGGED IN ---
+                {/* Only show patient buttons if NOT on the dashboard */}
+                {!isDashboard && (
                   <>
-                    <Link
-                      to="/my-profile"
-                      className="font-semibold text-blue-900"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Welcome, {user.first_name || user.username}!
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  // --- SHOW IF PATIENT IS LOGGED OUT ---
-                  <>
-                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>Patient Login</Link>
-                    <Link 
-                      to="/signup" 
-                      onClick={() => setIsMenuOpen(false)}
-                      className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg"
-                    >
-                      Sign Up
-                    </Link>
+                    {user ? (
+                      <>
+                        <Link
+                          to="/my-profile"
+                          className="font-semibold text-blue-900"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Welcome, {user.first_name || user.username}!
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg"
+                        >
+                          Logout
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="/login" onClick={() => setIsMenuOpen(false)}>Patient Login</Link>
+                        <Link 
+                          to="/signup" 
+                          onClick={() => setIsMenuOpen(false)}
+                          className="bg-gray-100 text-blue-900 font-semibold px-5 py-2 rounded-lg"
+                        >
+                          Sign Up
+                        </Link>
+                      </>
+                    )}
                   </>
                 )}
-                
-                {/* REMOVED: Admin Dashboard link for security */}
                 
               </div>
             </motion.div>

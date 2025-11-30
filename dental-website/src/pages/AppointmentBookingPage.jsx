@@ -1,5 +1,3 @@
-// src/pages/AppointmentBookingPage.jsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -14,8 +12,6 @@ const AppointmentBookingPage = () => {
 
   const [formData, setFormData] = useState({
     service_requested: 'Check-up & Cleaning',
-    appointment_date: '',
-    appointment_time: '10:00:00',
     notes: '',
   });
   const [error, setError] = useState(null);
@@ -41,21 +37,16 @@ const AppointmentBookingPage = () => {
     setLoading(true);
 
     try {
-      const selectedDate = new Date(formData.appointment_date);
-      const today = new Date();
-      // Simple validation for future date
-      if (selectedDate.setHours(0,0,0,0) < today.setHours(0,0,0,0)) {
-        setError("Please select a future date for your appointment.");
-        setLoading(false);
-        return;
-      }
-
-      await createAppointment(formData);
+      // Send the request with null date/time
+      await createAppointment({
+        ...formData,
+        appointment_date: null,
+        appointment_time: null
+      });
+      
       setSuccess(true);
-      setFormData(prev => ({ // Keep service but clear date/notes
+      setFormData(prev => ({
         service_requested: prev.service_requested,
-        appointment_date: '',
-        appointment_time: '10:00:00',
         notes: '',
       }));
       
@@ -89,17 +80,18 @@ const AppointmentBookingPage = () => {
           </div>
 
           <h1 className="font-playfair text-3xl font-bold text-gray-800 mb-4 text-center">
-            Book Your Appointment
+            Request an Appointment
           </h1>
           <p className="text-gray-600 mb-8 text-center">
-            You are logged in as **{user.first_name || user.username}**. Please fill out the form below.
+            Logged in as **{user.first_name || user.username}**. <br/>
+            Select a service and we will contact you with an available slot.
           </p>
           
           {success && (
             <div className="flex items-center gap-2 text-base text-green-700 bg-green-50 p-4 rounded-lg mb-6">
               <FiCheckCircle className="text-2xl" />
               <span>
-                **Success!** Your appointment request has been submitted. We will contact you shortly to confirm the details.
+                **Request Sent!** The doctor will review your request and assign an appointment time shortly.
               </span>
             </div>
           )}
@@ -124,45 +116,10 @@ const AppointmentBookingPage = () => {
               </select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Appointment Date */}
-              <div>
-                <label htmlFor="appointment_date" className="block text-sm font-medium text-gray-700 text-left">
-                  Preferred Date
-                </label>
-                <input
-                  id="appointment_date"
-                  name="appointment_date"
-                  type="date"
-                  required
-                  value={formData.appointment_date}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              {/* Appointment Time */}
-              <div>
-                <label htmlFor="appointment_time" className="block text-sm font-medium text-gray-700 text-left flex items-center gap-1">
-                  Preferred Time
-                </label>
-                <input
-                  id="appointment_time"
-                  name="appointment_time"
-                  type="time"
-                  step="3600" // Steps of 1 hour
-                  required
-                  value={formData.appointment_time}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
             {/* Notes */}
             <div>
               <label htmlFor="notes" className="block text-sm font-medium text-gray-700 text-left">
-                Additional Notes / Reason for Visit (Optional)
+                Preferences / Notes (Optional)
               </label>
               <textarea
                 id="notes"
@@ -171,6 +128,7 @@ const AppointmentBookingPage = () => {
                 value={formData.notes}
                 onChange={handleChange}
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g. I am only available on Tuesday mornings..."
               ></textarea>
             </div>
 
@@ -187,7 +145,7 @@ const AppointmentBookingPage = () => {
                 disabled={loading}
                 className="w-full flex justify-center items-center gap-2 bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-blue-800 transition-colors disabled:bg-gray-400"
               >
-                {loading ? <><FiLoader className="animate-spin"/> Submitting...</> : 'Request Appointment'}
+                {loading ? <><FiLoader className="animate-spin"/> Sending...</> : 'Send Request'}
               </button>
             </div>
           </form>

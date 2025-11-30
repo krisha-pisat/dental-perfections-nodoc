@@ -3,19 +3,15 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 class Patient(models.Model):
-    # This links a Patient to a User account (like 'Kiah')
-    # A User can have one Patient profile, and a Patient profile belongs to one User.
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile')
     phone = models.CharField(max_length=20, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     added_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        # This will show the user's full name or username in the admin
         return f"{self.user.first_name} {self.user.last_name}" or self.user.username
 
 class DentalHistory(models.Model):
-    # A Patient can have MANY history entries
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='history')
     visit_date = models.DateTimeField(default=timezone.now)
     notes = models.TextField(blank=True, help_text="Notes from the visit")
@@ -25,11 +21,10 @@ class DentalHistory(models.Model):
         return f"Visit for {self.patient.user.username} on {self.visit_date.strftime('%Y-%m-%d')}"
 
     class Meta:
-        ordering = ['-visit_date'] # Show newest visits first
+        ordering = ['-visit_date']
         verbose_name_plural = "Dental Histories"
 
 class Prescription(models.Model):
-    # A single history entry (visit) can have MANY prescriptions
     history_entry = models.ForeignKey(DentalHistory, on_delete=models.CASCADE, related_name='prescriptions')
     medicine_name = models.CharField(max_length=200)
     dosage = models.CharField(max_length=100, blank=True, help_text="e.g., 500mg")
@@ -38,7 +33,6 @@ class Prescription(models.Model):
     def __str__(self):
         return f"{self.medicine_name} ({self.dosage})"
 
-# --- NEW MODEL FOR APPOINTMENTS ---
 class Appointment(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
@@ -47,16 +41,16 @@ class Appointment(models.Model):
         ('COMPLETED', 'Completed'),
     ]
 
-    # Link to the Patient who created it
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, related_name='appointments') 
     
-    # Details of the booking
-    service_requested = models.CharField(max_length=100) # e.g., 'Check-up', 'Cleaning', 'Emergency'
-    appointment_date = models.DateField()
-    appointment_time = models.TimeField()
-    notes = models.TextField(blank=True, help_text="Reason for the visit or special request.")
+    service_requested = models.CharField(max_length=100) 
+    
+    # --- UPDATED: Allow nulls here so patients can just "Request" ---
+    appointment_date = models.DateField(null=True, blank=True)
+    appointment_time = models.TimeField(null=True, blank=True)
+    # ---------------------------------------------------------------
 
-    # Status and timestamps
+    notes = models.TextField(blank=True, help_text="Reason for the visit or special request.")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -65,4 +59,5 @@ class Appointment(models.Model):
         verbose_name_plural = "Appointments"
         
     def __str__(self):
-        return f"Appointment for {self.patient.user.username} on {self.appointment_date} at {self.appointment_time}"
+        date_str = self.appointment_date if self.appointment_date else "Not Scheduled"
+        return f"Appointment for {self.patient.user.username} on {date_str}"
