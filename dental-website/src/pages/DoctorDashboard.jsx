@@ -29,7 +29,7 @@ const DoctorDashboard = () => {
     treatment_provided: '',
   });
 
-  // --- Fetching Logic (CRITICAL FIX FOR INFINITE LOOP) ---
+  // --- Fetching Logic ---
   const fetchData = useCallback(async () => {
     setError(null);
     setLoading(true);
@@ -103,7 +103,7 @@ const DoctorDashboard = () => {
         setLoading(false);
     }
   };
-  // --- End History Creation Logic ---
+
 
 
   // Handle what to show if loading

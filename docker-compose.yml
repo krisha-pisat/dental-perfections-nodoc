@@ -1,0 +1,29 @@
+services:
+
+  backend:
+    build:
+      context: ./dental_backend
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "True"
+      DJANGO_SECRET_KEY: "django-insecure-change-me-in-production"
+      ALLOWED_HOSTS: "localhost,127.0.0.1,backend"
+    volumes:
+      - ./dental_backend:/app
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  frontend:
+    build:
+      context: ./dental-website
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: "http://localhost:8000"
+    depends_on:
+      - backend
+    volumes:
+      - ./dental-website:/app
+      - /app/node_modules

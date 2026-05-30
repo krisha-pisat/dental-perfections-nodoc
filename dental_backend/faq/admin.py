@@ -15,8 +15,3 @@ class FaqCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'display_order')
     inlines = [FaqItemInline] # Add items directly under category
 
-# Optional: Register FaqItem separately if you want direct access
-# @admin.register(FaqItem)
-# class FaqItemAdmin(admin.ModelAdmin):
-#     list_display = ('question', 'category', 'item_order')
-#     list_filter = ('category',)

@@ -12,23 +12,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
-from datetime import timedelta # <-- IMPORT THIS
+from datetime import timedelta
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-d0m91!gcrmtdnn4jkf+ju*@^-=0p@&-ro0ve*p(($jakox%7hi')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-d0m91!gcrmtdnn4jkf+ju*@^-=0p@&-ro0ve*p(($jakox%7hi'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -55,7 +49,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # <-- Make sure this is high up
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,12 +82,24 @@ WSGI_APPLICATION = 'dental_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.environ.get('DB_ENGINE') == 'django.db.backends.postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'dental_db'),
+            'USER': os.environ.get('DB_USER', 'dental_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -127,6 +134,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -134,19 +143,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# === CORS SETTINGS (UPDATED) ===
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", # Allow your React app
-    "http://127.0.0.1:5173", # Allow 127.0.0.1 version
-]
-CORS_ALLOW_CREDENTIALS = True # This allows cookies (for admin) and auth tokens
+# === CORS SETTINGS ===
+_cors = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173')
+CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors.split(',')]
+CORS_ALLOW_CREDENTIALS = True
 
-
-# === CSRF/SESSION SECURITY FIXES (NEW) ===
-# These settings fix the cross-port/cross-domain issues for the admin cookie:
-CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:5173",
-]
+# === CSRF/SESSION SECURITY FIXES ===
+_csrf = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:5173')
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf.split(',')]
 # For local dev, temporarily relax SameSite and Secure settings
 CSRF_COOKIE_SAMESITE = None
 CSRF_COOKIE_SECURE = False

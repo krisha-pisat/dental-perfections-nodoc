@@ -10,8 +10,8 @@ class BlogPost(models.Model):
     image_url = models.CharField(max_length=200, blank=True, null=True)
     publish_date = models.DateField(default=timezone.now)
     read_time = models.CharField(max_length=20, blank=True)
-    content = models.TextField(blank=True) # Keep this if you might use it later
-    external_url = models.URLField(max_length=500, blank=True, null=True) # <-- ADD THIS FIELD
+    content = models.TextField(blank=True) 
+    external_url = models.URLField(max_length=500, blank=True, null=True) 
 
     def __str__(self):
         return self.title

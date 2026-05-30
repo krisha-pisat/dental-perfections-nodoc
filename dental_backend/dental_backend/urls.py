@@ -14,7 +14,7 @@ def home(request):
             "blog": "/api/blog/posts/",
             "faq": "/api/faq/categories/",
             "reviews": "/api/reviews/",
-            "patients": "/api/patients/patients/" # <-- Add new endpoint
+            "patients": "/api/patients/patients/" 
         }
     })
 
@@ -31,7 +31,7 @@ urlpatterns = [
     path('api/faq/', include('faq.urls')),
     path('api/reviews/', include('reviews.urls')),
     
-    # --- ADD THIS LINE ---
+
     # This connects all the new patient/doctor URLs
     path('api/patients/', include('patients.urls')), 
     

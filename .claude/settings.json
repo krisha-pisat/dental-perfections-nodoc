@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\HP\\\\Projects\\\\dental-perfection-nodoc\\\\Dental-Perfections\\\\dental_backend\" -Depth 1 | Where-Object { $_.Name -notlike 'venv' -and $_.Name -notlike 'node_modules' -and $_.Name -notlike '.venv' } | Select-Object Name)"
+    ]
+  }
+}
