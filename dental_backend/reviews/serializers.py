@@ -9,5 +9,5 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         # We only list fields the user submits, plus read-only fields
         # 'user' and 'patient_name' will be added by the view.
-        fields = ['id', 'patient_name', 'review_text', 'rating']
-        read_only_fields = ['id', 'patient_name']
+        fields = ['id', 'patient_name', 'review_text', 'rating', 'created_at']
+        read_only_fields = ['id', 'patient_name', 'created_at']
