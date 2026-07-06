@@ -287,17 +287,17 @@ const ReviewsPage = () => {
 
                     {/* Photo thumbnails — click to open lightbox */}
                     {photos.length > 0 && (
-                      <div className={`mt-4 grid gap-2 ${photos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                      <div className={`mt-4 grid gap-1.5 ${photos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
                         {photos.slice(0, 4).map((src, i) => (
                           <button
                             key={i}
                             onClick={() => setLightbox({ photos, index: i })}
-                            className="relative rounded-xl overflow-hidden focus:outline-none group w-full"
+                            className={`relative overflow-hidden rounded-xl focus:outline-none group ${photos.length === 1 ? 'aspect-[4/3]' : 'aspect-square'}`}
                           >
                             <img
                               src={src}
                               alt="Review photo"
-                              className="w-full h-auto object-contain group-hover:brightness-90 transition-all duration-200"
+                              className="absolute inset-0 w-full h-full object-cover group-hover:brightness-90 transition-all duration-200"
                             />
                             {i === 3 && photos.length > 4 && (
                               <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-lg">
