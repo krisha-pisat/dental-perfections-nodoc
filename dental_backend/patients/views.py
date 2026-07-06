@@ -6,13 +6,14 @@ from django.utils.decorators import method_decorator
 
 from .models import Patient, DentalHistory, Prescription, Appointment
 from .serializers import (
-    PatientSerializer, 
-    DentalHistorySerializer, 
+    PatientSerializer,
+    PatientUpdateSerializer,
+    DentalHistorySerializer,
     PrescriptionSerializer,
     DentalHistoryCreateSerializer,
     PrescriptionCreateSerializer,
-    AppointmentCreateSerializer, 
-    AppointmentSerializer 
+    AppointmentCreateSerializer,
+    AppointmentSerializer
 )
 from .permissions import IsStaffUser
 
@@ -73,9 +74,13 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 
 
 # --- PATIENT-ONLY VIEW (Uses JWT Token) ---
-class MyProfileView(generics.RetrieveAPIView):
-    serializer_class = PatientSerializer
-    permission_classes = [IsAuthenticated] 
+class MyProfileView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method in ['PATCH', 'PUT']:
+            return PatientUpdateSerializer
+        return PatientSerializer
 
     def get_object(self):
         return self.request.user.patient_profile

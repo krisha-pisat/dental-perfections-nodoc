@@ -184,6 +184,23 @@ export async function updateAppointmentStatus(id, status, date = null, time = nu
 
 // -------------------- PATIENT SECURE FUNCTIONS (JWT) --------------------
 
+export async function updateMyProfile(data) {
+  const token = localStorage.getItem('access_token');
+  if (!token) throw new Error('No access token found. Please log in.');
+
+  const res = await fetch(`${API_BASE}/api/patients/me/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error('Failed to update profile');
+  return await res.json();
+}
+
 export async function getMyProfile() {
   const token = localStorage.getItem('access_token');
   if (!token) throw new Error('No access token found. Please log in.');
