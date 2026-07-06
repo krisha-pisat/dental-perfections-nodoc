@@ -1,9 +1,8 @@
 // src/pages/DoctorDashboard.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import AppointmentActionForm from '../components/AppointmentActionForm'; 
-import PrescriptionForm from '../components/PrescriptionForm'; 
+import StaffLayout from '../components/StaffLayout';
+import AppointmentActionForm from '../components/AppointmentActionForm';
+import PrescriptionForm from '../components/PrescriptionForm';
 import { getPatients, getAppointments, createHistoryEntry } from '../api'; 
 import { FiUser, FiCalendar, FiEdit3, FiPlus, FiAlertCircle, FiClipboard, FiFileText, FiRefreshCw, FiBookOpen, FiLoader } from 'react-icons/fi'; 
 import { FaTooth } from 'react-icons/fa'; // For patient history icon
@@ -109,20 +108,16 @@ const DoctorDashboard = () => {
   // Handle what to show if loading
   if (loading) {
     return (
-      <div>
-        <Navbar />
-        <div className="pt-32 pb-20 text-center">Loading patient data...</div>
-        <Footer />
-      </div>
+      <StaffLayout>
+        <div className="flex items-center justify-center h-64 text-gray-500">Loading patient data...</div>
+      </StaffLayout>
     );
   }
 
-  // Main Dashboard UI
   return (
-    <div>
-      <Navbar />
+    <StaffLayout>
       {/* Header */}
-      <section className="bg-white pt-32 pb-12 px-6 lg:px-8 border-b border-gray-200">
+      <section className="bg-white px-6 lg:px-8 py-6 border-b border-gray-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div>
             <h1 className="font-playfair text-4xl font-bold text-blue-900">
@@ -321,9 +316,7 @@ const DoctorDashboard = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </StaffLayout>
   );
 };
 

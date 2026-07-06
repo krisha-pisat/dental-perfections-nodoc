@@ -77,7 +77,7 @@ const Footer = () => {
 
         </div>
         <div className="border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
-          <p>&copy; {year} Dental Perfections. All rights reserved. &nbsp;|&nbsp; <a href="/staff-login" className="hover:text-white transition-colors">Staff Login</a></p>
+          <p>&copy; {year} Dental Perfections. All rights reserved.</p>
         </div>
       </div>
     </footer>

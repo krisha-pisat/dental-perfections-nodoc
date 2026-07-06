@@ -28,7 +28,7 @@ const ProtectedStaffRoute = ({ children }) => {
   }
 
   if (status === 'denied') {
-    return <Navigate to="/staff-login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
