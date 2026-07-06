@@ -40,6 +40,7 @@ const Footer = () => {
               <li><motion.a href="#" className="hover:text-white" whileHover={linkHoverEffect}>Smile Gallery</motion.a></li>
               <li><motion.a href="#" className="hover:text-white" whileHover={linkHoverEffect}>Blog</motion.a></li>
               <li><motion.a href="#" className="hover:text-white" whileHover={linkHoverEffect}>FAQ</motion.a></li>
+              <li><motion.a href="/reviews" className="hover:text-white" whileHover={linkHoverEffect}>Reviews</motion.a></li>
               <li><motion.a href="#" className="hover:text-white" whileHover={linkHoverEffect}>Contact Us</motion.a></li>
             </ul>
           </div>

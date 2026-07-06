@@ -89,6 +89,7 @@ const Navbar = () => {
             <Link to="/gallery" className="hover:text-blue-900 transition-colors">Smile Gallery</Link>
             <Link to="/blog" className="hover:text-blue-900 transition-colors">Blog</Link>
             <Link to="/faq" className="hover:text-blue-900 transition-colors">FAQ</Link>
+            <Link to="/reviews" className="hover:text-blue-900 transition-colors">Reviews</Link>
           </div>
         </div>
 
@@ -160,6 +161,7 @@ const Navbar = () => {
                 <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>Smile Gallery</Link>
                 <Link to="/blog" onClick={() => setIsMenuOpen(false)}>Blog</Link>
                 <Link to="/faq" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+                <Link to="/reviews" onClick={() => setIsMenuOpen(false)}>Reviews</Link>
                 <Link to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
                 
                 <hr className="w-1/2 my-2"/>

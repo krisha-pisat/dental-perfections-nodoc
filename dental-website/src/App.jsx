@@ -19,6 +19,7 @@ import StaffLoginPage from './pages/StaffLoginPage';
 import ProtectedStaffRoute from './components/ProtectedStaffRoute';
 import PatientProfilePage from './pages/PatientProfilePage';
 import AppointmentBookingPage from './pages/AppointmentBookingPage';
+import ReviewsPage from './pages/ReviewsPage';
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -41,7 +42,8 @@ const App = () => {
 
       {/* --- Patient Secure Routes --- */}
       <Route path="/my-profile" element={<PatientProfilePage />} />
-      <Route path="/book-appointment" element={<AppointmentBookingPage />} /> {/* <-- ADD NEW ROUTE */}
+      <Route path="/book-appointment" element={<AppointmentBookingPage />} />
+      <Route path="/reviews" element={<ReviewsPage />} /> {/* <-- ADD NEW ROUTE */}
 
       {/* --- Staff Routes (all protected) --- */}
       <Route path="/staff-login" element={<StaffLoginPage />} />
