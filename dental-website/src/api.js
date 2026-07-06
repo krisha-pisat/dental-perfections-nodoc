@@ -220,11 +220,12 @@ export async function addReview(reviewData) {
   const token = localStorage.getItem('access_token');
   if (!token) throw new Error('No access token found. Please log in.');
 
-  // Use FormData to support optional image upload
   const formData = new FormData();
   formData.append('rating', reviewData.rating);
   formData.append('review_text', reviewData.review_text);
-  if (reviewData.image) formData.append('image', reviewData.image);
+  if (reviewData.images && reviewData.images.length > 0) {
+    reviewData.images.forEach(img => formData.append('images', img));
+  }
 
   const res = await fetch(`${API_BASE}/api/reviews/`, {
     method: 'POST',

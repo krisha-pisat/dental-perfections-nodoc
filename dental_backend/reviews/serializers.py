@@ -1,13 +1,16 @@
 from rest_framework import serializers
-from .models import Review
+from .models import Review, ReviewImage
+
+class ReviewImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewImage
+        fields = ['id', 'image']
 
 class ReviewSerializer(serializers.ModelSerializer):
-    # 'patient_name' is now read-only. It will be provided by the view.
     patient_name = serializers.CharField(read_only=True)
+    images = ReviewImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Review
-        # We only list fields the user submits, plus read-only fields
-        # 'user' and 'patient_name' will be added by the view.
-        fields = ['id', 'patient_name', 'review_text', 'rating', 'image', 'created_at']
-        read_only_fields = ['id', 'patient_name', 'created_at']
+        fields = ['id', 'patient_name', 'review_text', 'rating', 'image', 'images', 'created_at']
+        read_only_fields = ['id', 'patient_name', 'created_at', 'images']

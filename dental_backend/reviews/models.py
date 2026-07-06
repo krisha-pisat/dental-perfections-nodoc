@@ -19,14 +19,17 @@ class Review(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        # --- THIS IS THE NEW, SAFER CODE ---
         if self.user:
-            # If a user is linked, use their name
             name = self.user.get_full_name() or self.user.username
             return f"Review by {name}"
         if self.patient_name:
-            # If no user, but patient_name exists (like your old reviews)
             return f"Review by {self.patient_name}"
-        
-        # If no user AND no name (the "broken" review)
         return f"Review (ID: {self.id} - No Name)"
+
+
+class ReviewImage(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='reviews/')
+
+    def __str__(self):
+        return f"Image for {self.review}"
