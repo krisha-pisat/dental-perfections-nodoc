@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # Only include non-sensitive fields
-        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff')
 
 # --- Your existing RegisterSerializer ---
 class RegisterSerializer(serializers.ModelSerializer):

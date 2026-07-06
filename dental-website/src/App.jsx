@@ -12,6 +12,7 @@ import PatientLoginPage from './pages/PatientLoginPage';
 import PatientSignUpPage from './pages/PatientSignUpPage';
 import DoctorLoginPage from './pages/DoctorLoginPage';
 import DoctorDashboard from './pages/DoctorDashboard';
+import StaffLoginPage from './pages/StaffLoginPage';
 import PatientProfilePage from './pages/PatientProfilePage'; 
 import AppointmentBookingPage from './pages/AppointmentBookingPage'; // <-- ADD THIS IMPORT
 
@@ -40,6 +41,7 @@ const App = () => {
 
       {/* --- Doctor/Admin Routes --- */}
       <Route path="/doctor-admin" element={<DoctorLoginPage />} />
+      <Route path="/staff-login" element={<StaffLoginPage />} />
       <Route path="/dashboard" element={<DoctorDashboard />} />
     </Routes>
   );

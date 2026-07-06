@@ -63,6 +63,37 @@ export function logoutUser() {
   localStorage.removeItem('refresh_token');
 }
 
+export async function loginStaff(username, password) {
+  const res = await fetch(`${API_BASE}/api/token/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || 'Invalid credentials');
+  }
+  const data = await res.json();
+  localStorage.setItem('staff_access_token', data.access);
+  localStorage.setItem('staff_refresh_token', data.refresh);
+  return data;
+}
+
+export async function getStaffUser() {
+  const token = localStorage.getItem('staff_access_token');
+  if (!token) throw new Error('No staff token found');
+  const res = await fetch(`${API_BASE}/api/users/me/`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch staff details');
+  return await res.json();
+}
+
+export function logoutStaff() {
+  localStorage.removeItem('staff_access_token');
+  localStorage.removeItem('staff_refresh_token');
+}
+
 export async function getCurrentUser() {
   const token = localStorage.getItem('access_token');
   if (!token) throw new Error('No access token found');
