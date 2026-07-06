@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import { getFaqCategories } from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AccordionItem from '../components/AccordionItem';
@@ -21,9 +21,9 @@ const FaqPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios.get('http://127.0.0.1:8000/api/faq/categories/')
-      .then(response => {
-        setFaqData(response.data);
+    getFaqCategories()
+      .then(data => {
+        setFaqData(data);
         setLoading(false);
       })
       .catch(error => {

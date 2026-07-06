@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getReviews } from '../api';
 import { motion } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
 
@@ -8,13 +8,9 @@ const PatientReviews = () => {
 
   useEffect(() => {
     // Fetch reviews from your Django API
-    axios.get('http://127.0.0.1:8000/api/reviews/')
-      .then(response => {
-        setReviews(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the reviews!", error);
-      });
+    getReviews()
+      .then(data => setReviews(data))
+      .catch(error => console.error("There was an error fetching the reviews!", error));
   }, []);
 
   if (reviews.length === 0) {

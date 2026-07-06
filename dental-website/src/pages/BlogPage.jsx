@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import axios from 'axios'; // For API calls
+import { getBlogPosts } from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import BlogCard from '../components/BlogCard'; // Import the card
@@ -16,9 +16,9 @@ const BlogPage = () => {
   // Fetch blog posts from Django API
   useEffect(() => {
     setLoading(true);
-    axios.get('http://127.0.0.1:8000/api/blog/posts/') // Your Django API endpoint for blog posts
-      .then(response => {
-        setPosts(response.data);
+    getBlogPosts()
+      .then(data => {
+        setPosts(data);
         setLoading(false);
       })
       .catch(error => {

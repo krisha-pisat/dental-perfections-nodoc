@@ -48,7 +48,7 @@ const DoctorLoginPage = () => {
           </p>
           
           <a
-            href="http://127.0.0.1:8000/admin/" // This is the correct link for you
+            href={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/admin/`}
             target="_blank" // Opens in a new tab
             rel="noopener noreferrer"
             className="w-full inline-block bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-blue-800 transition-colors"
