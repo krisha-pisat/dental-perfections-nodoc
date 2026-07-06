@@ -293,7 +293,7 @@ const ReviewsPage = () => {
                             key={i}
                             onClick={() => setLightbox({ photos, index: i })}
                             className="relative rounded-xl overflow-hidden focus:outline-none group"
-                            style={{ height: photos.length === 1 ? '200px' : '130px' }}
+                            style={{ height: '120px' }}
                           >
                             <img
                               src={src}
