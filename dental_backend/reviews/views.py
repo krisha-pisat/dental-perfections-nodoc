@@ -1,3 +1,4 @@
+import cloudinary.uploader
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Review, ReviewImage
@@ -21,6 +22,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
         name_to_save = user.get_full_name() or user.username
         review = serializer.save(user=user, patient_name=name_to_save, is_approved=False)
 
-        # Save each uploaded image as a ReviewImage
-        for img in self.request.FILES.getlist('images'):
-            ReviewImage.objects.create(review=review, image=img)
+        for img_file in self.request.FILES.getlist('images'):
+            result = cloudinary.uploader.upload(img_file, folder='reviews')
+            ReviewImage.objects.create(review=review, image=result['secure_url'])

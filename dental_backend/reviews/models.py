@@ -28,7 +28,7 @@ class Review(models.Model):
 
 class ReviewImage(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='reviews/')
+    image = models.URLField(max_length=500)
 
     def __str__(self):
         return f"Image for {self.review}"

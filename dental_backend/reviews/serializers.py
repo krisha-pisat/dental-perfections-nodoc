@@ -2,19 +2,9 @@ from rest_framework import serializers
 from .models import Review, ReviewImage
 
 class ReviewImageSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-
     class Meta:
         model = ReviewImage
         fields = ['id', 'image']
-
-    def get_image(self, obj):
-        if obj.image:
-            try:
-                return obj.image.url
-            except Exception:
-                return None
-        return None
 
 class ReviewSerializer(serializers.ModelSerializer):
     patient_name = serializers.CharField(read_only=True)
