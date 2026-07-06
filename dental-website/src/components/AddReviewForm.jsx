@@ -1,41 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { addReview } from '../api';
 import { FaStar } from 'react-icons/fa';
-
-// --- Inline SVGs ---
-const AlertCircleIcon = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-);
-const CheckCircleIcon = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-);
-// ---
+import { FiUpload, FiX, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 
 const StarRating = ({ rating, setRating }) => {
   const [hover, setHover] = useState(null);
   return (
     <div className="flex space-x-1">
-      {[...Array(5)].map((star, index) => {
-        const ratingValue = index + 1;
-        return (
-          <label key={index}>
-            <input
-              type="radio"
-              name="rating"
-              value={ratingValue}
-              onClick={() => setRating(ratingValue)}
-              className="hidden"
-            />
-            <FaStar
-              className="cursor-pointer"
-              color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
-              size={24}
-              onMouseEnter={() => setHover(ratingValue)}
-              onMouseLeave={() => setHover(null)}
-            />
-          </label>
-        );
-      })}
+      {[1, 2, 3, 4, 5].map((val) => (
+        <label key={val}>
+          <input type="radio" name="rating" value={val} onClick={() => setRating(val)} className="hidden" />
+          <FaStar
+            className="cursor-pointer transition-colors"
+            color={val <= (hover || rating) ? '#ffc107' : '#e4e5e9'}
+            size={28}
+            onMouseEnter={() => setHover(val)}
+            onMouseLeave={() => setHover(null)}
+          />
+        </label>
+      ))}
     </div>
   );
 };
@@ -43,29 +26,44 @@ const StarRating = ({ rating, setRating }) => {
 const AddReviewForm = ({ onReviewAdded }) => {
   const [rating, setRating] = useState(0);
   const [review_text, setReviewText] = useState('');
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be under 5MB.');
+      return;
+    }
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+    setError(null);
+  };
+
+  const removeImage = () => {
+    setImage(null);
+    setPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (rating === 0) {
-      setError("Please select a star rating.");
-      return;
-    }
+    if (rating === 0) { setError('Please select a star rating.'); return; }
     setError(null);
     setSuccess(false);
     setLoading(true);
-
     try {
-      await addReview({ rating, review_text });
+      await addReview({ rating, review_text, image });
       setSuccess(true);
       setRating(0);
       setReviewText('');
-      // Tell the parent page to refresh its data
-      if (onReviewAdded) {
-        onReviewAdded();
-      }
+      removeImage();
+      if (onReviewAdded) onReviewAdded();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,55 +72,84 @@ const AddReviewForm = ({ onReviewAdded }) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow border border-gray-200">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Write a Review
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="bg-white p-8 rounded-xl shadow border border-gray-200">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Write a Review</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+
+        {/* Star Rating */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Your Rating
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Your Rating</label>
           <StarRating rating={rating} setRating={setRating} />
         </div>
+
+        {/* Review Text */}
         <div>
-          <label htmlFor="review_text" className="block text-sm font-medium text-gray-700">
-            Your Review
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
           <textarea
-            id="review_text"
-            name="review_text"
             rows="4"
             value={review_text}
             onChange={(e) => setReviewText(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Share your experience..."
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Share your experience at Dental Perfections..."
             required
-          ></textarea>
+          />
+        </div>
+
+        {/* Photo Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Add a Photo <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+
+          {preview ? (
+            <div className="relative w-40">
+              <img src={preview} alt="Preview" className="w-40 h-32 object-cover rounded-lg border border-gray-200" />
+              <button
+                type="button"
+                onClick={removeImage}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
+              >
+                <FiX size={14} />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 border-2 border-dashed border-gray-300 rounded-lg px-5 py-4 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors w-full justify-center"
+            >
+              <FiUpload /> Click to upload a photo (max 5MB)
+            </button>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
         </div>
 
         {error && (
           <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-            <AlertCircleIcon />
-            <span>{error}</span>
+            <FiAlertCircle /> {error}
           </div>
         )}
         {success && (
           <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 p-3 rounded-lg">
-            <CheckCircleIcon />
-            <span>Thank you! Your review has been submitted.</span>
+            <FiCheckCircle /> Thank you! Your review has been submitted and will appear after approval.
           </div>
         )}
 
-        <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center items-center gap-2 bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-blue-800 transition-colors disabled:bg-gray-400"
-          >
-            {loading ? 'Submitting...' : 'Submit Review'}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-900 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition-colors disabled:opacity-50"
+        >
+          {loading ? 'Submitting...' : 'Submit Review'}
+        </button>
       </form>
     </div>
   );

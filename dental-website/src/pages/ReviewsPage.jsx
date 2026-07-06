@@ -172,6 +172,15 @@ const ReviewsPage = () => {
                   <p className="text-gray-600 text-sm leading-relaxed mt-3 flex-1 italic">
                     "{review.review_text}"
                   </p>
+
+                  {/* Photo */}
+                  {review.image && (
+                    <img
+                      src={review.image}
+                      alt="Patient experience"
+                      className="mt-4 w-full h-44 object-cover rounded-xl border border-gray-100"
+                    />
+                  )}
                 </motion.div>
               ))}
             </div>

@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     
     # 3rd Party Apps
     'rest_framework',
-    'rest_framework_simplejwt', # <-- ADD THIS
+    'rest_framework_simplejwt',
     'corsheaders',
+    'cloudinary',
+    'cloudinary_storage',
     
     # Your Apps
     'reviews',
@@ -136,6 +138,16 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+
+# === CLOUDINARY STORAGE ===
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'o6wva9dj'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '821266198547717'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

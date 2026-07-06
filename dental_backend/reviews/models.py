@@ -14,6 +14,7 @@ class Review(models.Model):
     patient_name = models.CharField(max_length=100, blank=True)
     review_text = models.TextField()
     rating = models.IntegerField(default=5)
+    image = models.ImageField(upload_to='reviews/', blank=True, null=True)
     is_approved = models.BooleanField(default=False, help_text="Only approved reviews are shown publicly.")
     created_at = models.DateTimeField(default=timezone.now)
 
