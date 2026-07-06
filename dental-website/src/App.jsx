@@ -12,10 +12,13 @@ import PatientLoginPage from './pages/PatientLoginPage';
 import PatientSignUpPage from './pages/PatientSignUpPage';
 import DoctorLoginPage from './pages/DoctorLoginPage';
 import DoctorDashboard from './pages/DoctorDashboard';
+import AppointmentsPage from './pages/AppointmentsPage';
+import PatientsPage from './pages/PatientsPage';
+import SchedulePage from './pages/SchedulePage';
 import StaffLoginPage from './pages/StaffLoginPage';
 import ProtectedStaffRoute from './components/ProtectedStaffRoute';
-import PatientProfilePage from './pages/PatientProfilePage'; 
-import AppointmentBookingPage from './pages/AppointmentBookingPage'; // <-- ADD THIS IMPORT
+import PatientProfilePage from './pages/PatientProfilePage';
+import AppointmentBookingPage from './pages/AppointmentBookingPage';
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -40,10 +43,13 @@ const App = () => {
       <Route path="/my-profile" element={<PatientProfilePage />} />
       <Route path="/book-appointment" element={<AppointmentBookingPage />} /> {/* <-- ADD NEW ROUTE */}
 
-      {/* --- Doctor/Admin Routes --- */}
+      {/* --- Staff Routes (all protected) --- */}
       <Route path="/staff-login" element={<StaffLoginPage />} />
       <Route path="/doctor-admin" element={<ProtectedStaffRoute><DoctorLoginPage /></ProtectedStaffRoute>} />
       <Route path="/dashboard" element={<ProtectedStaffRoute><DoctorDashboard /></ProtectedStaffRoute>} />
+      <Route path="/appointments" element={<ProtectedStaffRoute><AppointmentsPage /></ProtectedStaffRoute>} />
+      <Route path="/patients" element={<ProtectedStaffRoute><PatientsPage /></ProtectedStaffRoute>} />
+      <Route path="/schedule" element={<ProtectedStaffRoute><SchedulePage /></ProtectedStaffRoute>} />
     </Routes>
   );
 };
