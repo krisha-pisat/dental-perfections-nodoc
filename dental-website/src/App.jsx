@@ -13,6 +13,7 @@ import PatientSignUpPage from './pages/PatientSignUpPage';
 import DoctorLoginPage from './pages/DoctorLoginPage';
 import DoctorDashboard from './pages/DoctorDashboard';
 import StaffLoginPage from './pages/StaffLoginPage';
+import ProtectedStaffRoute from './components/ProtectedStaffRoute';
 import PatientProfilePage from './pages/PatientProfilePage'; 
 import AppointmentBookingPage from './pages/AppointmentBookingPage'; // <-- ADD THIS IMPORT
 
@@ -40,9 +41,9 @@ const App = () => {
       <Route path="/book-appointment" element={<AppointmentBookingPage />} /> {/* <-- ADD NEW ROUTE */}
 
       {/* --- Doctor/Admin Routes --- */}
-      <Route path="/doctor-admin" element={<DoctorLoginPage />} />
       <Route path="/staff-login" element={<StaffLoginPage />} />
-      <Route path="/dashboard" element={<DoctorDashboard />} />
+      <Route path="/doctor-admin" element={<ProtectedStaffRoute><DoctorLoginPage /></ProtectedStaffRoute>} />
+      <Route path="/dashboard" element={<ProtectedStaffRoute><DoctorDashboard /></ProtectedStaffRoute>} />
     </Routes>
   );
 };
