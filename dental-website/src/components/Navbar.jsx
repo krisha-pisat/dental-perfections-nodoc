@@ -36,7 +36,7 @@ const Navbar = () => {
   return (
     <div
       className={`
-        fixed top-0 left-0 w-full z-50 flex justify-center transition-all duration-500 relative
+        fixed top-0 left-0 w-full z-50 flex justify-center transition-all duration-500
         ${scrolled ? 'pt-4' : 'pt-0'}
       `}
     >
@@ -48,8 +48,8 @@ const Navbar = () => {
           flex items-center justify-between transition-all duration-500 ease-in-out relative
           ${
             scrolled
-              ? 'max-w-6xl bg-white shadow-lg rounded-full py-3 px-8'
-              : 'w-full bg-white py-5 px-10'
+              ? 'max-w-6xl bg-white shadow-xl rounded-full py-3 px-8 border border-gray-100'
+              : 'w-full bg-white shadow-sm py-5 px-10'
           }
         `}
       >
