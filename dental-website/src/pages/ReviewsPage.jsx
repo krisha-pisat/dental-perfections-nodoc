@@ -32,6 +32,25 @@ const StarDisplay = ({ rating, size = 'sm' }) => {
   );
 };
 
+const ReviewText = ({ text }) => {
+  const [expanded, setExpanded] = useState(false);
+  const limit = 160;
+  const isLong = text.length > limit;
+  return (
+    <p className="text-gray-600 text-sm leading-relaxed mt-3 flex-1 italic">
+      "{isLong && !expanded ? text.slice(0, limit).trimEnd() + '…' : text}"
+      {isLong && (
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="ml-1 text-blue-600 font-medium not-italic hover:underline"
+        >
+          {expanded ? 'Show less' : 'Show more'}
+        </button>
+      )}
+    </p>
+  );
+};
+
 const AVATAR_COLORS = [
   'bg-blue-700', 'bg-emerald-600', 'bg-violet-600',
   'bg-rose-600', 'bg-amber-600', 'bg-cyan-600',
@@ -264,9 +283,7 @@ const ReviewsPage = () => {
                     <StarDisplay rating={review.rating} />
 
                     {/* Review text */}
-                    <p className="text-gray-600 text-sm leading-relaxed mt-3 flex-1 italic">
-                      "{review.review_text}"
-                    </p>
+                    <ReviewText text={review.review_text} />
 
                     {/* Photo thumbnails — click to open lightbox */}
                     {photos.length > 0 && (
