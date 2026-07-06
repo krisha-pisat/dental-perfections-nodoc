@@ -3,8 +3,7 @@ from .models import Review, ReviewImage
 
 class ReviewImageInline(admin.TabularInline):
     model = ReviewImage
-    extra = 0
-    readonly_fields = ('image',)
+    extra = 1
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
