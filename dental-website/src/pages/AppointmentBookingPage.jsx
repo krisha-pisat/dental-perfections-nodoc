@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -17,11 +17,20 @@ const AppointmentBookingPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+
+  // Auto-redirect to profile after success
+  useEffect(() => {
+    if (!success) return;
+    if (countdown === 0) { navigate('/profile'); return; }
+    const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [success, countdown, navigate]);
 
   // Redirect if not logged in
   if (!user) {
     navigate('/login');
-    return null; 
+    return null;
   }
 
   const handleChange = (e) => {
@@ -88,11 +97,19 @@ const AppointmentBookingPage = () => {
           </p>
           
           {success && (
-            <div className="flex items-center gap-2 text-base text-green-700 bg-green-50 p-4 rounded-lg mb-6">
-              <FiCheckCircle className="text-2xl" />
-              <span>
-                **Request Sent!** The doctor will review your request and assign an appointment time shortly.
-              </span>
+            <div className="text-center bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
+              <FiCheckCircle className="text-4xl text-green-600 mx-auto mb-3" />
+              <h3 className="font-semibold text-green-800 text-lg mb-1">Request Sent!</h3>
+              <p className="text-green-700 text-sm mb-4">
+                The doctor will review your request and assign an appointment time shortly.
+              </p>
+              <button
+                onClick={() => navigate('/profile')}
+                className="bg-blue-900 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-800 transition-colors text-sm"
+              >
+                View My Appointments
+              </button>
+              <p className="text-green-600 text-xs mt-3">Redirecting in {countdown}s...</p>
             </div>
           )}
 
