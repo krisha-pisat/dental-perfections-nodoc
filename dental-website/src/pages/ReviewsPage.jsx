@@ -292,13 +292,12 @@ const ReviewsPage = () => {
                           <button
                             key={i}
                             onClick={() => setLightbox({ photos, index: i })}
-                            className="relative rounded-xl overflow-hidden focus:outline-none group"
-                            style={{ height: '120px' }}
+                            className="relative rounded-xl overflow-hidden focus:outline-none group w-full"
                           >
                             <img
                               src={src}
                               alt="Review photo"
-                              className="w-full h-full object-cover group-hover:brightness-90 transition-all duration-200"
+                              className="w-full h-auto object-contain group-hover:brightness-90 transition-all duration-200"
                             />
                             {i === 3 && photos.length > 4 && (
                               <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-lg">
