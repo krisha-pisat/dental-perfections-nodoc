@@ -17,7 +17,10 @@ def create_patient_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_patient_profile(sender, instance, **kwargs):
     """
-    A signal that saves the profile when the User object is saved.
+    Saves the patient profile on user save.
+    If a user has become staff, remove their patient profile.
     """
-    if hasattr(instance, 'patient_profile'):
+    if instance.is_staff:
+        Patient.objects.filter(user=instance).delete()
+    elif hasattr(instance, 'patient_profile'):
         instance.patient_profile.save()

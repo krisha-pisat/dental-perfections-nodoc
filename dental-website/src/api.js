@@ -39,6 +39,9 @@ export async function loginUser(username, password) {
   const data = await res.json();
   localStorage.setItem('access_token', data.access);
   localStorage.setItem('refresh_token', data.refresh);
+  // clear any leftover staff session
+  localStorage.removeItem('staff_access_token');
+  localStorage.removeItem('staff_refresh_token');
   return data;
 }
 
@@ -76,6 +79,9 @@ export async function loginStaff(username, password) {
   const data = await res.json();
   localStorage.setItem('staff_access_token', data.access);
   localStorage.setItem('staff_refresh_token', data.refresh);
+  // clear any leftover patient session
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
   return data;
 }
 
