@@ -174,18 +174,22 @@ const ReviewsPage = () => {
                   </p>
 
                   {/* Photos */}
-                  {review.images && review.images.length > 0 && (
-                    <div className={`mt-4 grid gap-2 ${review.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                      {review.images.map((img, i) => (
-                        <img
-                          key={i}
-                          src={img.image}
-                          alt="Patient experience"
-                          className="w-full h-36 object-cover rounded-xl border border-gray-100"
-                        />
-                      ))}
-                    </div>
-                  )}
+                  {(() => {
+                    const validPhotos = (review.images || []).filter(img => img.image);
+                    if (!validPhotos.length) return null;
+                    return (
+                      <div className={`mt-4 grid gap-2 ${validPhotos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                        {validPhotos.map((img, i) => (
+                          <img
+                            key={i}
+                            src={img.image}
+                            alt="Patient experience"
+                            className="w-full h-36 object-cover rounded-xl border border-gray-100"
+                          />
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </motion.div>
               ))}
             </div>
