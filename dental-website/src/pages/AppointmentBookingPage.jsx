@@ -22,7 +22,7 @@ const AppointmentBookingPage = () => {
   // Auto-redirect to profile after success
   useEffect(() => {
     if (!success) return;
-    if (countdown === 0) { navigate('/profile'); return; }
+    if (countdown === 0) { navigate('/myprofile'); return; }
     const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
     return () => clearTimeout(timer);
   }, [success, countdown, navigate]);
@@ -104,7 +104,7 @@ const AppointmentBookingPage = () => {
                 The doctor will review your request and assign an appointment time shortly.
               </p>
               <button
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate('/myprofile')}
                 className="bg-blue-900 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-800 transition-colors text-sm"
               >
                 View My Appointments
